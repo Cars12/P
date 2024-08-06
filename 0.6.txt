@@ -1,0 +1,163 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX 100
+
+// Structures to store user and booking information
+typedef struct {
+    char name[50];
+    int age;
+    char gender[10];
+    char phone[15];
+} Passenger;
+
+typedef struct {
+    int ticketNumber;
+    Passenger passenger;
+    char from[50];
+    char to[50];
+    char date[15];
+    char trainNumber[10];
+    char seatClass[20];
+    float price;
+} Booking;
+
+Booking bookings[MAX];
+int bookingCount = 0;
+
+void registerPassenger(Passenger *passenger) {
+    printf("Enter Name: ");
+    fgets(passenger->name, sizeof(passenger->name), stdin);
+    passenger->name[strcspn(passenger->name, "\n")] = 0; // Remove trailing newline
+
+    printf("Enter Age: ");
+    scanf("%d", &passenger->age);
+    getchar(); // To consume the newline character left by scanf
+
+    printf("Enter Gender: ");
+    fgets(passenger->gender, sizeof(passenger->gender), stdin);
+    passenger->gender[strcspn(passenger->gender, "\n")] = 0; // Remove trailing newline
+
+    printf("Enter Phone Number: ");
+    fgets(passenger->phone, sizeof(passenger->phone), stdin);
+    passenger->phone[strcspn(passenger->phone, "\n")] = 0; // Remove trailing newline
+}
+
+void bookTicket() {
+    if (bookingCount >= MAX) {
+        printf("No more bookings can be made.\n");
+        return;
+    }
+
+    Booking newBooking;
+    newBooking.ticketNumber = bookingCount + 1;
+
+    printf("Enter journey details:\n");
+    registerPassenger(&newBooking.passenger);
+
+    printf("From: ");
+    fgets(newBooking.from, sizeof(newBooking.from), stdin);
+    newBooking.from[strcspn(newBooking.from, "\n")] = 0; // Remove trailing newline
+
+    printf("To: ");
+    fgets(newBooking.to, sizeof(newBooking.to), stdin);
+    newBooking.to[strcspn(newBooking.to, "\n")] = 0; // Remove trailing newline
+
+    printf("Date of Journey (dd-mm-yyyy): ");
+    fgets(newBooking.date, sizeof(newBooking.date), stdin);
+    newBooking.date[strcspn(newBooking.date, "\n")] = 0; // Remove trailing newline
+
+    printf("Train Number: ");
+    fgets(newBooking.trainNumber, sizeof(newBooking.trainNumber), stdin);
+    newBooking.trainNumber[strcspn(newBooking.trainNumber, "\n")] = 0; // Remove trailing newline
+
+    printf("Class (Economy/Sleeper/First Class): ");
+    fgets(newBooking.seatClass, sizeof(newBooking.seatClass), stdin);
+    newBooking.seatClass[strcspn(newBooking.seatClass, "\n")] = 0; // Remove trailing newline
+
+    newBooking.price = 100.0; // Simple pricing for demonstration
+    bookings[bookingCount++] = newBooking;
+
+    printf("Ticket booked successfully! Your ticket number is %d.\n", newBooking.ticketNumber);
+}
+
+void cancelTicket() {
+    int ticketNumber;
+    printf("Enter ticket number to cancel: ");
+    scanf("%d", &ticketNumber);
+
+    int found = 0;
+    for (int i = 0; i < bookingCount; i++) {
+        if (bookings[i].ticketNumber == ticketNumber) {
+            found = 1;
+            for (int j = i; j < bookingCount - 1; j++) {
+                bookings[j] = bookings[j + 1];
+            }
+            bookingCount--;
+            printf("Ticket %d canceled successfully.\n", ticketNumber);
+            break;
+        }
+    }
+
+    if (!found) {
+        printf("Ticket number %d not found.\n", ticketNumber);
+    }
+}
+
+void displayTickets() {
+    if (bookingCount == 0) {
+        printf("No bookings available.\n");
+        return;
+    }
+
+    for (int i = 0; i < bookingCount; i++) {
+        Booking b = bookings[i];
+        printf("\nTicket Number: %d\n", b.ticketNumber);
+        printf("Name: %s\n", b.passenger.name);
+        printf("Age: %d\n", b.passenger.age);
+        printf("Gender: %s\n", b.passenger.gender);
+        printf("Phone: %s\n", b.passenger.phone);
+        printf("From: %s\n", b.from);
+        printf("To: %s\n", b.to);
+        printf("Date: %s\n", b.date);
+        printf("Train Number: %s\n", b.trainNumber);
+        printf("Class: %s\n", b.seatClass);
+        printf("Price: $%.2f\n", b.price);
+    }
+}
+
+void menu() {
+    int choice;
+    while (1) {
+        printf("\nRailway Reservation System\n");
+        printf("1. Book Ticket\n");
+        printf("2. Cancel Ticket\n");
+        printf("3. Display Booked Tickets\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        getchar(); // To consume the newline character left by scanf
+
+        switch (choice) {
+            case 1:
+                bookTicket();
+                break;
+            case 2:
+                cancelTicket();
+                break;
+            case 3:
+                displayTickets();
+                break;
+            case 4:
+                exit(0);
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    }
+}
+
+int main() {
+    menu();
+    return 0;
+}

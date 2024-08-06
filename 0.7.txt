@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_USERS 100
+#define MAX_USERNAME 50
+#define MAX_PASSWORD 50
+
+typedef struct {
+    char username[MAX_USERNAME];
+    char password[MAX_PASSWORD];
+} User;
+
+User users[MAX_USERS];
+int userCount = 0;
+
+void registerUser() {
+    if (userCount >= MAX_USERS) {
+        printf("User limit reached. Cannot register more users.\n");
+        return;
+    }
+
+    User newUser;
+    printf("Enter username: ");
+    scanf("%s", newUser.username);
+
+    for (int i = 0; i < userCount; i++) {
+        if (strcmp(users[i].username, newUser.username) == 0) {
+            printf("Username already exists. Please try a different username.\n");
+            return;
+        }
+    }
+
+    printf("Enter password: ");
+    scanf("%s", newUser.password);
+
+    users[userCount++] = newUser;
+    printf("User registered successfully.\n");
+}
+
+void loginUser() {
+    char username[MAX_USERNAME];
+    char password[MAX_PASSWORD];
+
+    printf("Enter username: ");
+    scanf("%s", username);
+    printf("Enter password: ");
+    scanf("%s", password);
+
+    for (int i = 0; i < userCount; i++) {
+        if (strcmp(users[i].username, username) == 0 && strcmp(users[i].password, password) == 0) {
+            printf("Login successful. Welcome, %s!\n", username);
+            return;
+        }
+    }
+    printf("Invalid username or password. Please try again.\n");
+}
+
+void resetPassword() {
+    char username[MAX_USERNAME];
+    printf("Enter username to reset password: ");
+    scanf("%s", username);
+
+    for (int i = 0; i < userCount; i++) {
+        if (strcmp(users[i].username, username) == 0) {
+            printf("Enter new password: ");
+            scanf("%s", users[i].password);
+            printf("Password reset successfully.\n");
+            return;
+        }
+    }
+    printf("Username not found. Please register first.\n");
+}
+
+int main() {
+    int choice;
+    while (1) {
+        printf("\nE-commerce Platform Login System\n");
+        printf("1. Register\n");
+        printf("2. Login\n");
+        printf("3. Reset Password\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                registerUser();
+                break;
+            case 2:
+                loginUser();
+                break;
+            case 3:
+                resetPassword();
+                break;
+            case 4:
+                printf("Exiting...\n");
+                return 0;
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    }
+}
